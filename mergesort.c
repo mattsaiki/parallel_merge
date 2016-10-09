@@ -19,17 +19,23 @@ Date: October 2016
 
 //Begin forward declare
 void generateRandomValues();
+int validateSort(int numElements);
+void serialMergeSort(int low, int mid, int high);
+void serialSort(int bottom, int top);
 //End forward declare
 
 
-
+// Global variable
 int* serial_array;
 int* serial_array_temp;
 int* parallel_array;
 int* parallel_array_temp;
 int thread_count;
 long array_size;
-pthread_barrier_t my_barrier;
+//pthread_barrier_t my_barrier;
+// end global variable
+
+//Begin Main
 int main ( int argc, char* argv[]){
 	
 	// enter in command line arguments in form for thread_count and array_size
@@ -38,7 +44,7 @@ int main ( int argc, char* argv[]){
 	// end command line arguments
 	
 	
-	pthread_barrier_init(&my_barrier,NULL,thread_count);
+	//pthread_barrier_init(&my_barrier,NULL,thread_count);
 	time_t time_of_day;
 	time_of_day = time(NULL);
 	// mallocing for array
@@ -63,7 +69,7 @@ int main ( int argc, char* argv[]){
 	free(parallel_array_temp);
 	
 }
-// end main
+// End Main
 
 // function that uses time and rand() to generate random integers into serial array and serial temp.
 void generateRandomValues(){
@@ -72,6 +78,81 @@ void generateRandomValues(){
 		int my_rand = 1 + rand()%1000;
 		serial_array[i] = my_rand;
 		serial_array_temp[i] = my_rand;
+		parallel_array[i] = my_rand;
+		parallel_array_temp[i] = my_rand;
 	}
 }
+// End generateRandomValues
+
+/*
+ * This function takes in the lowest and highest index and partitions the array into two halves until there is only 1 element in the subarray, at which point it begins to merge the subarrays back until it merges the entire array.
+ */
+void serialSort(int bottom, int top){
+        if(bottom < top){
+                int mid;
+                mid = (bottom + top)/2;
+                serialSort(bottom, mid);
+                serialSort(mid+1, top);
+                serialMergeSort(bottom, mid, top);
+        }
+}
+// end SerialSort
+
+
+/*
+ * This function sorts the array/subarray. It takes in the lowest, mid, and highest index of the array.
+ * First it compares elements from the bottom half of the array with the top half and inserts the smaller element in the lowest index of the array.
+ * Then, if the first half of the sorted array came from [low-mid], it copies the [mid+1-high] to the second half of the sorted array. And vice versa if first half of sorted array came from [mid+1-high]
+ * Lastly, it copies the temp array back to the original array
+ */
+void serialMergeSort(int low, int mid, int high){
+        int a, b, i, index;
+        a = index = low;
+        b = mid+1;
+        while((a<=mid)&&(b<=high)){
+                if(serial_array[a]<=serial_array[b]){
+                        serial_array_temp[index] = serial_array[a];
+                        a++;
+                }
+                else{
+                        serial_array_temp[index] = serial_array[b];
+                        b++;
+                }
+                index++;
+        }
+        if(a>mid){
+                for(i=b; i<=high; i++){
+                        serial_array_temp[index] = serial_array[i];
+                        index++;
+                }
+        }
+        else{
+                for(i=a; i<=mid; i++){
+                        serial_array_temp[index] = serial_array[i];
+                        index++;
+                }
+        }
+        for(i=low; i<=high; i++){
+                serial_array[i] = serial_array_temp[i];
+        }
+}
+// End SerialMergeSort
+
+/*
+ * This method takes in the total number of elements in the array.
+ * Then it iterates through the array to check if it is sorted correctly.
+ * Returns 1 if not sorted correctly and 0 if there are no errors.
+ */
+int validateSort(int numElements){
+        int i, j;
+        for(i=0; i<numElements; i++){
+                for(j=i; j<numElements; j++){
+                        if(serial_array[i]>serial_array[j]){
+                                return 1;
+                        }
+                }
+        }
+        return 0;
+}
+//end validateSort
 //End
