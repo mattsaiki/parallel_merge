@@ -42,32 +42,51 @@ int main ( int argc, char* argv[]){
 	thread_count = atoi(argv[1]);
 	array_size = atol(argv[2]);
 	// end command line arguments
-	
+
 	
 	//pthread_barrier_init(&my_barrier,NULL,thread_count);
+	
 	time_t time_of_day;
 	time_of_day = time(NULL);
+	srand((unsigned int)(time_of_day));
+	
 	// mallocing for array
 	serial_array = malloc(sizeof(int)*array_size);
+	if(serial_array == NULL){
+	printf(" malloc failed, program exit\n");
+	exit(1);
+	}
 	serial_array_temp = malloc(sizeof(int)*array_size);
+	if(serial_array_temp == NULL){
+	printf(" malloc failed, program exit\n");
+	exit(1);
+	}
 	parallel_array = malloc(sizeof(int)*array_size);
+	if(parallel_array == NULL){
+	printf(" malloc failed, program exit\n");
+	exit(1);
+	}
 	parallel_array_temp = malloc(sizeof(int)*array_size);
-	if(serial_array || serial_array_temp || parallel_array || parallel_array_temp == NULL){
-		printf(" ERROR CHECKING MALLOC\n");
+	if(parallel_array_temp == NULL){
+	printf(" malloc failed, program exit\n");
+	exit(1);
 	}
 	// end malloc
-	srand((unsigned int)(time_of_day));
+
 	generateRandomValues();
-	int i;
-	for( i = 0; i < array_size; i++){
-	printf(" serial array: %d\n",serial_array[i]);
-	printf(" serial_temp_array: %d\n",serial_array_temp[i]);
+	// performing serial sort
+	serialSort(0,array_size-1);
+	for(int i = 0; i < array_size; i++){
+		printf(" serial array: %d\n",serial_array[i]);
+		printf(" serial_temp_array: %d\n",serial_array_temp[i]);
 	}
+	int check = validateSort(array_size);
+	if(check != 0){printf("sorting failed\n");}
 	free(serial_array);
 	free(serial_array_temp);
 	free(parallel_array);
 	free(parallel_array_temp);
-	
+	return 0;	
 }
 // End Main
 
@@ -146,6 +165,8 @@ void serialMergeSort(int low, int mid, int high){
 int validateSort(int numElements){
         int i, j;
         for(i=0; i<numElements; i++){
+		if(serial_array[i] != serial_array_temp[i]){
+		return 1;}
                 for(j=i; j<numElements; j++){
                         if(serial_array[i]>serial_array[j]){
                                 return 1;
