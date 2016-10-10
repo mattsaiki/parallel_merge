@@ -131,31 +131,28 @@ void serialSort(int bottom, int top){
  * Lastly, it copies the temp array back to the original array
  */
 void serialMergeSort(int low, int mid, int high){
-        int a, b, i, index;
-        a = index = low;
-        b = mid+1;
-        while((a<=mid)&&(b<=high)){
-                if(serial_array[a]<=serial_array[b]){
-                        serial_array_temp[index] = serial_array[a];
-                        a++;
+        int l, m, i;
+        l = i = low; m = mid + 1;
+        while((l <= mid) && (m <= high)){
+                if(serial_array[l] <= serial_array[m]){
+                        serial_array_temp[i] = serial_array[l];
+                        l++;
                 }
                 else{
-                        serial_array_temp[index] = serial_array[b];
-                        b++;
+                        serial_array_temp[i] = serial_array[m];
+                        m++;
                 }
-                index++;
+                i++;
         }
-        if(a>mid){
-                for(i=b; i<=high; i++){
-                        serial_array_temp[index] = serial_array[i];
-                        index++;
-                }
+        while(l <= mid){
+                serial_array_temp[i] = serial_array[l];
+                i++;
+                l++;
         }
-        else{
-                for(i=a; i<=mid; i++){
-                        serial_array_temp[index] = serial_array[i];
-                        index++;
-                }
+        while(m <= high){
+                serial_array_temp[i] = serial_array[m];
+                i++;
+                m++;
         }
         for(i=low; i<=high; i++){
                 serial_array[i] = serial_array_temp[i];
