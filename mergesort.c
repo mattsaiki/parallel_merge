@@ -15,6 +15,7 @@ Date: October 2016
 #include <math.h>
 #include "mergesortparallel.h"
 #include <time.h>
+
 // end includes
 
 //Begin forward declare
@@ -32,6 +33,7 @@ int* parallel_array;
 int* parallel_array_temp;
 int thread_count;
 long array_size;
+pthread_t* thread_handler;
 // end global variable
 
 //Begin Main
@@ -75,6 +77,10 @@ int main ( int argc, char* argv[]){
 		printf(" malloc failed, program exit\n");
 		exit(1);
 	}
+	thread_handler = malloc(sizeof(pthread_t)*thread_count);
+	if(thread_handler = NULL){
+		printf(" malloc failed, program exit\n");
+		exit(1);}
 	// end malloc
 	// fill array with randomvalues
 	generateRandomValues();
