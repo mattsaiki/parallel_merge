@@ -31,7 +31,10 @@ extern pthread_t* thread_handler;
 int intiliazeThreads(int thread_count);
 //end forward declare
 
-int* mergeSortParallel(){
+void mergeSortParallel(void* rank){
+	long myrank = (long) rank;
+	long quotient = array_size/thread_count;
+	long remainder = array_size%thread_count;
 }
 
 
@@ -46,7 +49,8 @@ int findBreakPoint(){
 }
 
 
-// function returns 0 or 1 on success
+// function returns 0 or 1 on success creates our thread using thread cound and
+// place them in a thread handler ( an array of pthreads)
 int intiliazeThreads(int thread_count){
 	
 	for( int i = 1; i < thread_count; i++){
@@ -57,6 +61,15 @@ int intiliazeThreads(int thread_count){
 	}
 	return 0;
 }
+
+
+// barrierInit
+
+// barrierWait
+
+// barrierDestroy
+
+
 
 
 

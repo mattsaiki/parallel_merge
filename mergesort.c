@@ -78,7 +78,7 @@ int main ( int argc, char* argv[]){
 		exit(1);
 	}
 	thread_handler = malloc(sizeof(pthread_t)*thread_count);
-	if(thread_handler = NULL){
+	if(thread_handler == NULL){
 		printf(" malloc failed, program exit\n");
 		exit(1);}
 	// end malloc
